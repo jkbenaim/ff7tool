@@ -4,7 +4,7 @@ objects=$(sources:.c=.o)
 
 
 UNAME_S := $(shell uname -s)
-CFLAGS=-Wall -ggdb -std=gnu99 -Os -march=native
+CFLAGS=-Wall -ggdb -std=gnu99 -Os
 LDFLAGS=-lglut -lGLU -lGL -lm
 
 #ifeq ($(UNAME_S),IRIX64)
