@@ -1,14 +1,14 @@
 #include <GL/glut.h>
+#include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include "endian.h"
-#include "worldload.h"
 #include "lzss.h"
+#include "worldload.h"
 
 extern int die(char *s);
 
@@ -78,19 +78,19 @@ void chunk_inflate(struct chunk *c, void *worldmap, int chunkNum)
 	
 	uint8_t *chunkData = (uint8_t *)worldmap + 0xB800 * chunkNum;
 	for(i=0;i<16;i++) {
-		int32_t blockOffset = le32toh( ((uint32_t *)chunkData)[i] );
+		int32_t blockOffset = le32toh(((uint32_t *)chunkData)[i]);
 		uint8_t *blockData = chunkData + blockOffset;
 		uint32_t blockSize = /*lzss_get_decompressed_size(blockData)*/ 65536;
 		void *decomp_buffer = malloc(blockSize);
-		if( decomp_buffer == NULL )
+		if(decomp_buffer == NULL)
 			die("failure in malloc");
 		uint32_t decompressedSize = lzss_decode(blockData, decomp_buffer);
 		/*
 		if( decompressedSize != blockSize )
 			die("discrepancy between expected and real decompressed size");
 		*/
-		if( decompressedSize <= blockSize )
-			realloc(decomp_buffer, decompressedSize);
+		if(decompressedSize <= blockSize)
+			decomp_buffer = realloc(decomp_buffer, decompressedSize);
 		else
 			die("decomp_buffer too small");
 
@@ -147,9 +147,6 @@ void chunk_inflate(struct chunk *c, void *worldmap, int chunkNum)
 				}
 			}
 		glEnd();
-
 		glEndList();
-
 	}
-	
 }
